@@ -2,13 +2,16 @@ package util;
 
 import java.util.ArrayList;
 
-import prog.MainProg.WaveFunction;
+import draw.MainCanvas;
 
-public class StackWaveForm {
+public class StackWaveForm extends WaveForm {
     protected ArrayList<WaveForm> layers = new ArrayList<>();
     
-    public StackWaveForm() {}
+    public StackWaveForm() {
+        super(1, 1, 1);
+    }
     public StackWaveForm(ArrayList<WaveForm> lys) {
+        super(1, 1, 1);
         layers = lys;
     }
 
@@ -17,22 +20,25 @@ public class StackWaveForm {
         for (WaveForm wave : layers) { wave.resetAngle(); }
     }
 
+    @Override
     public short getSample() {
-        short sample = 0;
-        for (WaveForm layer : layers) {
-            sample += layer.getSample();
-        }
-        return sample;
+        short ret = (short) Math.round(function(angle));
+        for (WaveForm layer : layers) { layer.progress(); }
+        return ret;
     }
-    public int ahh(int x) { int sum = 10; return sum; }
-    public WaveFunction getWaveFunction() {
-        ArrayList<WaveFunction> funcs = new ArrayList<>();
-        funcs.add((x) -> { return 0; });
+    
+    @Override
+    public int getDrawY(int x) {
+        double xPrec = x / 10000.0;
+        double maxFreqHeight = 32767 / (MainCanvas.W_HEIGHT/2.0);
+        return (int) Math.round(function(xPrec) / maxFreqHeight);
+    }
+
+    public double function(double x) {
+        double sum = 0;
         for (WaveForm layer : layers) {
-            WaveFunction newW = (x) ->{ return funcs.getLast().f(x) + layer.getWaveFunction().f(x); };
-            System.out.println(newW.f(10));
-            funcs.add(newW);
+            sum += layer.function(x);
         }
-        return funcs.getLast();
+        return Math.min(sum, 32767);
     }
 }

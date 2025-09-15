@@ -2,21 +2,23 @@ package draw;
 
 import java.awt.*;
 import javax.swing.*;
-import prog.MainProg.WaveFunction;
+
+import util.SineWave;
+import util.WaveForm;
 
 public class MainCanvas extends JFrame {
     public MyCanvas canvas = new MyCanvas();
-    private WaveFunction function;
+    protected WaveForm wave;
 
     public static int W_WIDTH = 500;
     public static int W_HEIGHT = 375;
-    private static int DELTA = 5;
+    private static int DELTA = 1;
 
     public MainCanvas() {
-        drawFunction((x) -> { return 0; });
+        wave = new SineWave(220, 32767, 44100);
 
         setLayout(new BorderLayout());
-        setSize(W_WIDTH, W_HEIGHT);
+        setSize(W_WIDTH, W_HEIGHT+40);
         setTitle("Wave Generator");
         add("Center", canvas);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -28,13 +30,13 @@ public class MainCanvas extends JFrame {
         @Override
         public void paint(Graphics g) {
             for (int x = 0; x < W_WIDTH; x += DELTA) {
-                g.drawLine(x, W_HEIGHT/2 - function.f(x), x+DELTA, W_HEIGHT/2 - function.f(x+DELTA));
+                g.drawLine(x, W_HEIGHT/2 - wave.getDrawY(x), x+DELTA, W_HEIGHT/2 - wave.getDrawY(x+DELTA));
             }
         }
     }
 
-    public void drawFunction(WaveFunction func) {
-        function = func;
+    public void drawFunction(WaveForm newWave) {
+        wave = newWave;
         repaint();
     }
 }

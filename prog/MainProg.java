@@ -17,13 +17,14 @@ public class MainProg {
         line.start();
 
         StackWaveForm stack = new StackWaveForm();
-        stack.addLayer(new SawtoothWave(220, 32767, sampleRate));
-        stack.addLayer(new SawtoothWave(440, 32767, sampleRate));
-        stack.addLayer(new SawtoothWave(880, 32767, sampleRate));
+        stack.addLayer(new SawtoothWave(130, 5000, sampleRate));
+        stack.addLayer(new SawtoothWave(180, 5000, sampleRate));
+        stack.addLayer(new SineWave(155.56, 5000, sampleRate));
+        
         byte[] buffer = new byte[bufferSize];
 
         MainCanvas canvas = new MainCanvas();
-        canvas.drawFunction(stack.getWaveFunction());
+        canvas.drawFunction(stack);
 
         while (true) {
             for (int i = 0; i < buffer.length / 2; ++i) {
@@ -33,9 +34,5 @@ public class MainProg {
             }
             line.write(buffer, 0, buffer.length);
         }
-    }
-
-    public interface WaveFunction {
-        int f(int x);
     }
 }
